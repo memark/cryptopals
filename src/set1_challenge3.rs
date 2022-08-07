@@ -1,9 +1,8 @@
-use rustc_serialize::hex::{FromHex, ToHex};
-
 use crate::{english::probability_english, set1_challenge2::fixed_xor};
+use rustc_serialize::hex::{FromHex, ToHex};
 use std::{collections::BTreeMap, str};
 
-fn singe_byte_xor_cipher(input: &str) -> String {
+fn single_byte_xor_cipher(input: &str) -> String {
     (0..255_u8)
         .map(|c| {
             let cc = vec![c].to_hex();
@@ -28,7 +27,7 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(
-            singe_byte_xor_cipher(
+            single_byte_xor_cipher(
                 "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
             ),
             "Cooking MC's like a pound of bacon"
