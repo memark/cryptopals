@@ -31,7 +31,7 @@ mod tests {
     #[ignore = "too slow"]
     #[test]
     fn test() {
-        let file = std::fs::read_to_string("src/4.txt").unwrap();
+        let file = std::fs::read_to_string("data/4.txt").unwrap();
         let input = file.split_whitespace().collect();
         assert_eq!(
             detect_single_character_xor(input),
