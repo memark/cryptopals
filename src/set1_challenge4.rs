@@ -7,12 +7,9 @@ fn detect_single_character_xor(input: Vec<&str>) -> String {
         .flat_map(|i| {
             (0..255_u8)
                 .map(|c| {
-                    let cc = hex::encode(vec![c]);
-                    let b = cc.repeat(i.len());
-                    let r = fixed_xor(i, &b);
-                    str::from_utf8(&hex::decode(&r).unwrap())
-                        .unwrap_or_default()
-                        .to_string()
+                    let key = hex::encode([c]).repeat(i.len());
+                    let r = hex::decode(&key).unwrap();
+                    str::from_utf8(&r).unwrap_or_default().to_string()
                 })
                 .map(|x| (probability_english_percent(&x), x.to_owned()))
         })
