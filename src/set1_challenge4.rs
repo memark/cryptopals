@@ -27,6 +27,7 @@ mod tests {
     #[ignore = "too slow"]
     #[test]
     fn test() {
+        // read()?
         let file = std::fs::read_to_string("data/4.txt").unwrap();
         let input = file.split_whitespace().collect();
         assert_eq!(
