@@ -89,3 +89,78 @@ where
         .map(|(x, y)| (x ^ y).count_ones() as u8)
         .sum()
 }
+
+pub fn break_repeating_key_xor(cipher_text_base64: &str) -> String {
+    use itertools::Itertools;
+
+    let cipher_text = base64::decode(cipher_text_base64).unwrap();
+
+    let keysizes = 2..=40_usize;
+    let best_keysizes = keysizes
+        .map(|ks| {
+            let first = &cipher_text[0..ks];
+            let second = &cipher_text[ks..ks * 2];
+            let distance = hamming_distance(first, second) as f32 / ks as f32;
+            println!("keylength {:?} - distance {:?}", ks, distance);
+
+            (ks, distance)
+        })
+        .sorted_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
+        .take(5)
+        .map(|x| {
+            println!("candidate keylength {:?} - distance {:?}", x.0, x.1);
+            x
+        })
+        .map(|x| x.0)
+        .collect_vec();
+
+    let best_keysize = best_keysizes[0];
+    println!("best_keysize {:#?}", best_keysize);
+
+    // HACK: Kolla så att transposen fungerar
+    // let cipher_text = vec![1, 2, 3, 4, 5, 6];
+    // println!("cipher_text {:#?}", cipher_text);
+    // let best_keysize = 2;
+    // println!("best_keysize {:#?}", best_keysize);
+
+    let padding = calculate_padding(cipher_text.len(), best_keysize);
+    let cipher_text_with_padding = [&cipher_text[..], &vec![0; padding]].concat();
+    println!("cipher_text.len() {:#?}", cipher_text.len());
+    println!("padding {:#?}", padding);
+    println!(
+        "cipher_text_with_padding.len() {:#?}",
+        cipher_text_with_padding.len()
+    );
+
+    let mut transposed_cipher_text_with_padding = vec![0; cipher_text_with_padding.len()];
+    transpose::transpose(
+        &cipher_text_with_padding,
+        &mut transposed_cipher_text_with_padding,
+        best_keysize,
+        cipher_text_with_padding.len() / best_keysize,
+    );
+    println!("output_array {:#?}", transposed_cipher_text_with_padding);
+
+    let transposed_blocks = transposed_cipher_text_with_padding
+        .as_slice()
+        .chunks(cipher_text_with_padding.len() / best_keysize)
+        .collect_vec();
+    println!("transposed_blocks {:#?}", transposed_blocks);
+
+    let res = transposed_blocks
+        .iter()
+        .take(1)
+        .map(|block| single_byte_xor_cipher(&hex::encode(block)))
+        .collect_vec();
+    println!("res {:#?}", res);
+
+    "".to_string()
+}
+
+fn calculate_padding(total_length: usize, block_size: usize) -> usize {
+    if total_length % block_size > 0 {
+        block_size - (total_length % block_size)
+    } else {
+        0
+    }
+}

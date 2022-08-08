@@ -60,6 +60,24 @@ mod tests {
     }
 
     #[test]
+    fn challenge_6_break_repeating_key_xor() {
+        use itertools::Itertools;
+
+        let file = std::fs::read_to_string("data/6.txt")
+            .unwrap()
+            .split('\n')
+            .join("");
+        assert_eq!(break_repeating_key_xor(&file), "wää");
+
+        /*
+        Jag behöver testdata för att lösa det här problemet känner jag.
+
+        Nån plaintext som jag kan kryptera med en kortare upprepad nyckel.
+        XOR är ju reversibelt, så det borde väl bara vara att använda samma funktion jag redan har för att skapa min ciphertext!
+        */
+    }
+
+    #[test]
     fn transpose() {
         use itertools::Itertools;
 
