@@ -53,6 +53,9 @@ mod tests {
 
     #[test]
     fn challenge_6_hamming_distance() {
-        assert_eq!(hamming_distance("this is a test", "wokka wokka!!!"), 37);
+        assert_eq!(
+            hamming_distance("this is a test".as_bytes(), "wokka wokka!!!".as_bytes()),
+            37
+        );
     }
 }

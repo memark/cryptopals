@@ -80,9 +80,12 @@ pub fn repeating_key_xor(input: &str, key: &str) -> String {
     hex::encode(r)
 }
 
-pub fn hamming_distance(a: &str, b: &str) -> u8 {
-    a.bytes()
-        .zip(b.bytes())
+pub fn hamming_distance<'a, T>(a: T, b: T) -> u8
+where
+    T: IntoIterator<Item = &'a u8>,
+{
+    a.into_iter()
+        .zip(b.into_iter())
         .map(|(x, y)| (x ^ y).count_ones() as u8)
         .sum()
 }
