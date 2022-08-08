@@ -58,4 +58,28 @@ mod tests {
             37
         );
     }
+
+    #[test]
+    fn transpose() {
+        use itertools::Itertools;
+
+        // Create a 2D array in row-major order: the rows of our 2D array are contiguous,
+        // and the columns are strided
+        let input_array = vec![1, 2, 3, 4, 5, 6];
+        println!("{:#?}", input_array);
+
+        let blocks = input_array.as_slice().chunks(3).collect_vec();
+        println!("{:#?}", blocks);
+
+        // Treat our 6-element array as a 2D 3x2 array, and transpose it to a 2x3 array
+        let mut output_array = vec![0; 6];
+        transpose::transpose(&input_array, &mut output_array, 3, 2);
+
+        // The rows have become the columns, and the columns have become the rows
+        let expected_array = vec![1, 4, 2, 5, 3, 6];
+        assert_eq!(output_array, expected_array);
+
+        let transposed_blocks = output_array.as_slice().chunks(2).collect_vec();
+        println!("{:#?}", transposed_blocks);
+    }
 }
