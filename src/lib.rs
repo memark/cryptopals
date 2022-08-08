@@ -20,22 +20,31 @@ pub fn fixed_xor(a: &str, b: &str) -> String {
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
     use crate::english::probability_english;
-    use std::{collections::BTreeMap, str};
+    use std::collections::BTreeMap;
 
     (0..255_u8)
         .map(|c| {
-            let cc = hex::encode(vec![c]);
-            let b = cc.repeat(input.len());
+            let b = get_repeated_key(c, input.len());
             let r = fixed_xor(input, &b);
-            str::from_utf8(&hex::decode(&r).unwrap())
-                .unwrap_or_default()
-                .to_string()
+            hex_to_utf8(&r)
         })
         .map(|x| ((probability_english(&x) * 100f64) as u8, x.to_owned()))
         .collect::<BTreeMap<u8, String>>()
         .values()
         .next_back()
         .unwrap()
+        .to_string()
+}
+
+fn get_repeated_key(c: u8, l: usize) -> String {
+    hex::encode(vec![c]).repeat(l)
+}
+
+fn hex_to_utf8(h: &str) -> String {
+    use std::str;
+
+    str::from_utf8(&hex::decode(&h).unwrap())
+        .unwrap_or_default()
         .to_string()
 }
 
