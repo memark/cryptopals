@@ -1,13 +1,13 @@
-use rustc_serialize::hex::ToHex;
 use std::str;
 
 fn repeating_key_xor(input: &str, key: &str) -> String {
-    input
+    let r = input
         .chars()
         .zip(key.chars().cycle())
         .map(|(v, k)| v as u8 ^ k as u8)
-        .collect::<Vec<u8>>()
-        .to_hex()
+        .collect::<Vec<u8>>();
+
+    hex::encode(r)
 }
 
 #[cfg(test)]

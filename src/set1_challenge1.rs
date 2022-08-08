@@ -1,10 +1,5 @@
-use serialize::{
-    base64::{self, ToBase64},
-    hex::FromHex,
-};
-
 fn hex_to_base64(input: &str) -> String {
-    input.from_hex().unwrap().to_base64(base64::STANDARD)
+    base64::encode(hex::decode(input).unwrap())
 }
 
 #[cfg(test)]

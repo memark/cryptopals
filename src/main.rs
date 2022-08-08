@@ -1,5 +1,3 @@
-extern crate rustc_serialize as serialize;
-
 mod english;
 
 mod set1_challenge1;

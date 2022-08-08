@@ -1,5 +1,4 @@
 use crate::{english::probability_english, set1_challenge2::fixed_xor};
-use rustc_serialize::hex::{FromHex, ToHex};
 use std::{collections::BTreeMap, str};
 
 fn detect_single_character_xor(input: Vec<&str>) -> String {
@@ -8,10 +7,10 @@ fn detect_single_character_xor(input: Vec<&str>) -> String {
         .flat_map(|i| {
             (0..255_u8)
                 .map(|c| {
-                    let cc = vec![c].to_hex();
+                    let cc = hex::encode(vec![c]);
                     let b = cc.repeat(i.len());
                     let r = fixed_xor(i, &b);
-                    str::from_utf8(&r.from_hex().unwrap())
+                    str::from_utf8(&hex::decode(&r).unwrap())
                         .unwrap_or_default()
                         .to_string()
                 })

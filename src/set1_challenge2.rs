@@ -1,14 +1,14 @@
-use rustc_serialize::hex::{FromHex, ToHex};
-
 pub fn fixed_xor(a: &str, b: &str) -> String {
-    let aa = a.from_hex().unwrap();
-    let bb = b.from_hex().unwrap();
+    let a = hex::decode(a).unwrap();
+    let b = hex::decode(b).unwrap();
 
-    aa.iter()
-        .zip(bb.iter())
+    let r = a
+        .iter()
+        .zip(b.iter())
         .map(|(x, y)| x ^ y)
-        .collect::<Vec<u8>>()
-        .to_hex()
+        .collect::<Vec<u8>>();
+
+    hex::encode(r)
 }
 
 #[cfg(test)]

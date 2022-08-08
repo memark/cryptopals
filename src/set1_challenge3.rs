@@ -1,14 +1,13 @@
 use crate::{english::probability_english, set1_challenge2::fixed_xor};
-use rustc_serialize::hex::{FromHex, ToHex};
 use std::{collections::BTreeMap, str};
 
 fn single_byte_xor_cipher(input: &str) -> String {
     (0..255_u8)
         .map(|c| {
-            let cc = vec![c].to_hex();
+            let cc = hex::encode(vec![c]);
             let b = cc.repeat(input.len());
             let r = fixed_xor(input, &b);
-            str::from_utf8(&r.from_hex().unwrap())
+            str::from_utf8(&hex::decode(&r).unwrap())
                 .unwrap_or_default()
                 .to_string()
         })
