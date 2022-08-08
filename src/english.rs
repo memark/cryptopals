@@ -1,3 +1,8 @@
+pub fn probability_english_percent(text: &str) -> u8 {
+    (probability_english(text) * 100f64) as u8
+}
+
+// Below code is from
 // https://gist.github.com/elasticdog/c8c11f6cb5f00aa90611
 
 use std::char;

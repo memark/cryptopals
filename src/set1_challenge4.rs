@@ -1,4 +1,4 @@
-use crate::{english::probability_english, set1_challenge2::fixed_xor};
+use crate::{english::probability_english_percent, set1_challenge2::fixed_xor};
 use std::{collections::BTreeMap, str};
 
 fn detect_single_character_xor(input: Vec<&str>) -> String {
@@ -14,7 +14,7 @@ fn detect_single_character_xor(input: Vec<&str>) -> String {
                         .unwrap_or_default()
                         .to_string()
                 })
-                .map(|x| ((probability_english(&x) * 100f64) as u8, x.to_owned()))
+                .map(|x| (probability_english_percent(&x), x.to_owned()))
         })
         .collect::<BTreeMap<u8, String>>()
         .values()
