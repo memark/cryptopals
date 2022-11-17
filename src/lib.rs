@@ -1,5 +1,6 @@
 mod english;
 pub mod set1;
+pub mod set2;
 
 pub fn hex_to_base64(input: &str) -> String {
     base64::encode(hex::decode(input).unwrap())
@@ -163,4 +164,11 @@ fn calculate_padding(total_length: usize, block_size: usize) -> usize {
     } else {
         0
     }
+}
+
+pub fn pkcs7_padding(block: &str, block_length: usize) -> String {
+    let len_diff = block_length - block.len();
+    let padding_char = len_diff as u8 as char;
+    let padding_string = vec![padding_char; len_diff].iter().collect::<String>();
+    [block, &padding_string].concat()
 }
