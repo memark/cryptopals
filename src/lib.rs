@@ -43,7 +43,7 @@ fn get_repeated_key(c: u8, l: usize) -> String {
 fn hex_to_utf8(h: &str) -> String {
     use std::str;
 
-    str::from_utf8(&hex::decode(&h).unwrap())
+    str::from_utf8(&hex::decode(h).unwrap())
         .unwrap_or_default()
         .to_string()
 }
