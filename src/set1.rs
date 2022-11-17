@@ -34,7 +34,6 @@ mod tests {
         );
     }
 
-    #[ignore = "too slow"]
     #[test]
     fn challenge_4_detect_single_character_xor() {
         let file = std::fs::read_to_string("data/4.txt").unwrap();
