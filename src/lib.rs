@@ -58,7 +58,7 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
             (0..255_u8)
                 .map(|c| {
                     let key = hex::encode([c]).repeat(i.len());
-                    let r = hex::decode(&key).unwrap();
+                    let r = hex::decode(fixed_xor(i, &key)).unwrap();
                     str::from_utf8(&r).unwrap_or_default().to_string()
                 })
                 .map(|x| (probability_english_percent(&x), x.to_owned()))
