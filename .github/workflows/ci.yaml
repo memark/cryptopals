@@ -19,7 +19,10 @@ jobs:
             ~/.cargo/git/db/
           key: cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: cargo-
+      - uses: taiki-e/install-action@nextest
+      
       - run: cargo build
+      - run: cargo nextest run
       - run: cargo test
       - run: cargo fmt --check
       - run: cargo clippy
