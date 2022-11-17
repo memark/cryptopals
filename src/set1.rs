@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn challenge_1_hex_to_base64() {
@@ -71,7 +72,7 @@ mod tests {
             .unwrap()
             .split('\n')
             .join("");
-        // assert_eq!(break_repeating_key_xor(&file), "wää");
+        assert_eq!(break_repeating_key_xor(&file), "wää");
 
         /*
         Jag behöver testdata för att lösa det här problemet känner jag.
