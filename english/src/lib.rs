@@ -13,7 +13,7 @@ use std::str;
 /// Uses the Bhattacharyya coefficient to determine if text is likely to be English.
 ///
 /// Higher is better.
-pub fn probability_english(text: &str) -> f64 {
+fn probability_english(text: &str) -> f64 {
     // count of the number of times a character occurs in the given text
     let mut count: BTreeMap<char, f64> = BTreeMap::new();
     for letter in text.chars() {

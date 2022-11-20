@@ -19,7 +19,7 @@ pub fn fixed_xor(a: &str, b: &str) -> String {
 }
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
-    use english::probability_english;
+    use english::probability_english_percent;
     use std::collections::BTreeMap;
 
     (0..255_u8)
@@ -28,7 +28,7 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
             let r = fixed_xor(input, &b);
             hex_to_utf8(&r)
         })
-        .map(|x| ((probability_english(&x) * 100_f64) as u8, x.to_owned()))
+        .map(|x| (probability_english_percent(&x), x.to_owned()))
         .collect::<BTreeMap<u8, String>>()
         .values()
         .next_back()
