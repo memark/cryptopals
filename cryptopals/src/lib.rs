@@ -46,7 +46,7 @@ fn hex_to_utf8(h: &str) -> String {
 
 pub fn detect_single_character_xor(input: Vec<&str>) -> String {
     use english::probability_english_percent;
-    use std::{collections::BTreeMap, str};
+    use std::collections::BTreeMap;
 
     input
         .iter()
@@ -54,8 +54,8 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
             (0..255_u8)
                 .map(|c| {
                     let key = hex::encode([c]).repeat(i.len());
-                    let r = hex::decode(fixed_xor(i, &key)).unwrap();
-                    str::from_utf8(&r).unwrap_or_default().to_owned()
+                    let r = fixed_xor(i, &key);
+                    hex_to_utf8(&r)
                 })
                 .map(|x| (probability_english_percent(&x), x.to_owned()))
         })
