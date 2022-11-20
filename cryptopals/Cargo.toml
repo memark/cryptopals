@@ -8,6 +8,7 @@ base64 = "0.13.0"
 english = { path = "../english" }
 hex = "0.4.3"
 itertools = "0.10.3"
+rayon = "1.6.0"
 transpose = "0.2.1"
 
 [dev-dependencies]
