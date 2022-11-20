@@ -1,22 +1,5 @@
-pub mod set1;
-pub mod set2;
-
-pub fn hex_to_base64(input: &str) -> String {
-    base64::encode(hex::decode(input).unwrap())
-}
-
-pub fn fixed_xor(a: &str, b: &str) -> String {
-    let a = hex::decode(a).unwrap();
-    let b = hex::decode(b).unwrap();
-
-    let r = a
-        .iter()
-        .zip(b.iter())
-        .map(|(x, y)| x ^ y)
-        .collect::<Vec<u8>>();
-
-    hex::encode(r)
-}
+mod utils;
+use utils::*;
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
     use english::probability_english_percent;
@@ -33,12 +16,6 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
         .values()
         .next_back()
         .unwrap()
-        .to_owned()
-}
-
-fn hex_to_utf8(h: &str) -> String {
-    std::str::from_utf8(&hex::decode(h).unwrap())
-        .unwrap_or_default()
         .to_owned()
 }
 
@@ -62,26 +39,6 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
         .next_back()
         .unwrap()
         .to_owned()
-}
-
-pub fn repeating_key_xor(input: &str, key: &str) -> String {
-    let r = input
-        .chars()
-        .zip(key.chars().cycle())
-        .map(|(v, k)| v as u8 ^ k as u8)
-        .collect::<Vec<u8>>();
-
-    hex::encode(r)
-}
-
-pub fn hamming_distance<'a, T>(a: T, b: T) -> u8
-where
-    T: IntoIterator<Item = &'a u8>,
-{
-    a.into_iter()
-        .zip(b.into_iter())
-        .map(|(x, y)| (x ^ y).count_ones() as u8)
-        .sum()
 }
 
 pub fn break_repeating_key_xor(cipher_text_base64: &str) -> String {
@@ -159,9 +116,71 @@ fn calculate_padding(total_length: usize, block_size: usize) -> usize {
     }
 }
 
-pub fn pkcs7_padding(block: &str, block_length: usize) -> String {
-    let len_diff = block_length - block.len();
-    let padding_char = len_diff as u8 as char;
-    let padding_string = vec![padding_char; len_diff].iter().collect::<String>();
-    [block, &padding_string].concat()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn challenge_3_single_byte_xor_cipher() {
+        assert_eq!(
+            single_byte_xor_cipher(
+                "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+            ),
+            "Cooking MC's like a pound of bacon"
+        );
+    }
+
+    #[test]
+    fn challenge_4_detect_single_character_xor() {
+        let file = std::fs::read_to_string("data/4.txt").unwrap();
+        let input = file.split_whitespace().collect();
+        assert_eq!(
+            detect_single_character_xor(input),
+            "Now that the party is jumping\n"
+        );
+    }
+
+    #[ignore = "broken"]
+    #[test]
+    fn challenge_6_break_repeating_key_xor() {
+        use itertools::Itertools;
+
+        let file = std::fs::read_to_string("data/6.txt")
+            .unwrap()
+            .split('\n')
+            .join("");
+        assert_eq!(break_repeating_key_xor(&file), "wää");
+
+        /*
+        Jag behöver testdata för att lösa det här problemet känner jag.
+
+        Nån plaintext som jag kan kryptera med en kortare upprepad nyckel.
+        XOR är ju reversibelt, så det borde väl bara vara att använda samma funktion jag redan har för att skapa min ciphertext!
+        */
+    }
+
+    #[test]
+    fn transpose() {
+        use itertools::Itertools;
+
+        // Create a 2D array in row-major order: the rows of our 2D array are contiguous,
+        // and the columns are strided
+        let input_array = vec![1, 2, 3, 4, 5, 6];
+        println!("{:#?}", input_array);
+
+        let blocks = input_array.as_slice().chunks(3).collect_vec();
+        println!("{:#?}", blocks);
+
+        // Treat our 6-element array as a 2D 3x2 array, and transpose it to a 2x3 array
+        let mut output_array = vec![0; 6];
+        transpose::transpose(&input_array, &mut output_array, 3, 2);
+
+        // The rows have become the columns, and the columns have become the rows
+        let expected_array = vec![1, 4, 2, 5, 3, 6];
+        assert_eq!(output_array, expected_array);
+
+        let transposed_blocks = output_array.as_slice().chunks(2).collect_vec();
+        println!("{:#?}", transposed_blocks);
+    }
 }
