@@ -37,9 +37,7 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
 }
 
 fn hex_to_utf8(h: &str) -> String {
-    use std::str;
-
-    str::from_utf8(&hex::decode(h).unwrap())
+    std::str::from_utf8(&hex::decode(h).unwrap())
         .unwrap_or_default()
         .to_owned()
 }
