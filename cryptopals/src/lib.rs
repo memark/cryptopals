@@ -24,8 +24,8 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
 
     (0..255_u8)
         .map(|c| {
-            let b = get_repeated_key(c, input.len());
-            let r = fixed_xor(input, &b);
+            let key = hex::encode([c]).repeat(input.len());
+            let r = fixed_xor(input, &key);
             hex_to_utf8(&r)
         })
         .map(|x| (probability_english_percent(&x), x.to_owned()))
@@ -34,10 +34,6 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
         .next_back()
         .unwrap()
         .to_owned()
-}
-
-fn get_repeated_key(c: u8, l: usize) -> String {
-    hex::encode(vec![c]).repeat(l)
 }
 
 fn hex_to_utf8(h: &str) -> String {
