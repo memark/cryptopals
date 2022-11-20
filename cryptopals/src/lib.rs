@@ -21,11 +21,12 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
 
 pub fn detect_single_character_xor(input: Vec<&str>) -> String {
     use english::probability_english_percent;
+    use rayon::prelude::*;
     use std::collections::BTreeMap;
 
     input
-        .iter()
-        .flat_map(|i| {
+        .par_iter()
+        .flat_map_iter(|i| {
             (0..255_u8)
                 .map(|c| {
                     let key = hex::encode([c]).repeat(i.len());
