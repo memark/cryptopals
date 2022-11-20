@@ -4,12 +4,6 @@ fn hex_to_base64(input: &str) -> String {
     base64::encode(hex::decode(input).unwrap())
 }
 
-pub fn hex_to_utf8(h: &str) -> String {
-    std::str::from_utf8(&hex::decode(h).unwrap())
-        .unwrap_or_default()
-        .to_owned()
-}
-
 pub fn fixed_xor(input: &[u8], key: &[u8]) -> Vec<u8> {
     input
         .iter()
