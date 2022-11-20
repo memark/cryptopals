@@ -2,6 +2,7 @@ mod utils;
 
 use rayon::prelude::*;
 use std::collections::BTreeMap;
+use std::str;
 use utils::*;
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
@@ -17,10 +18,13 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
 }
 
 fn get_possible_plaintexts_for_single_byte_xor_cipher(input: &str) -> Vec<String> {
+    let input = hex::decode(input).unwrap();
+
     (0..255_u8)
         .map(|c| {
-            let key = hex::encode([c]).repeat(input.len());
-            hex_to_utf8(&fixed_xor(input, &key))
+            let key = [c].repeat(input.len());
+            let result = fixed_xor(&input, &key);
+            str::from_utf8(&result).unwrap_or_default().to_owned()
         })
         .collect()
 }

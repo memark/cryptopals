@@ -10,17 +10,11 @@ pub fn hex_to_utf8(h: &str) -> String {
         .to_owned()
 }
 
-pub fn fixed_xor(a: &str, b: &str) -> String {
-    let a = hex::decode(a).unwrap();
-    let b = hex::decode(b).unwrap();
-
-    let r = a
-        .iter()
+pub fn fixed_xor(a: &[u8], b: &[u8]) -> Vec<u8> {
+    a.iter()
         .zip(b.iter())
         .map(|(x, y)| x ^ y)
-        .collect::<Vec<u8>>();
-
-    hex::encode(r)
+        .collect::<Vec<u8>>()
 }
 
 pub fn repeating_key_xor(input: &str, key: &str) -> String {
@@ -70,10 +64,10 @@ mod tests {
     fn challenge_2_fixed_xor() {
         assert_eq!(
             fixed_xor(
-                "1c0111001f010100061a024b53535009181c",
-                "686974207468652062756c6c277320657965"
+                &hex::decode("1c0111001f010100061a024b53535009181c").unwrap(),
+                &hex::decode("686974207468652062756c6c277320657965").unwrap()
             ),
-            "746865206b696420646f6e277420706c6179"
+            hex::decode("746865206b696420646f6e277420706c6179").unwrap()
         );
     }
 
