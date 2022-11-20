@@ -1,10 +1,15 @@
 #![allow(dead_code)]
 
-fn hex_to_base64(input: &str) -> String {
+type Base64Str = str;
+type Base64String = String;
+type HexStr = str;
+type HexString = String;
+
+fn hex_to_base64(input: &HexStr) -> Base64String {
     base64::encode(hex::decode(input).unwrap())
 }
 
-pub fn hex_to_utf8(h: &str) -> String {
+pub fn hex_to_utf8(h: &HexStr) -> String {
     std::str::from_utf8(&hex::decode(h).unwrap())
         .unwrap_or_default()
         .to_owned()
