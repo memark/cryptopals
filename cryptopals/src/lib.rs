@@ -1,45 +1,44 @@
 mod utils;
 
-use english::probability_english_percent;
+use rayon::prelude::*;
 use std::collections::BTreeMap;
 use utils::*;
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
-    get_possible_plaintexts_for_single_byte_xor_cipher(input)
-        .into_iter()
-        .map(|x| (probability_english_percent(&x), x))
-        .collect::<BTreeMap<u8, String>>()
-        .into_iter()
-        .next_back()
-        .unwrap()
-        .1
+    get_best_match(get_possible_plaintexts_for_single_byte_xor_cipher(input))
 }
 
 pub fn detect_single_character_xor(input: Vec<&str>) -> String {
-    use rayon::prelude::*;
-
-    input
-        .par_iter()
-        .flat_map_iter(|i| {
-            get_possible_plaintexts_for_single_byte_xor_cipher(i)
-                .into_iter()
-                .map(|x| (probability_english_percent(&x), x))
-        })
-        .collect::<BTreeMap<u8, String>>()
-        .into_iter()
-        .next_back()
-        .unwrap()
-        .1
+    get_best_match(
+        input
+            .par_iter()
+            .flat_map_iter(|i| get_possible_plaintexts_for_single_byte_xor_cipher(i)),
+    )
 }
 
 fn get_possible_plaintexts_for_single_byte_xor_cipher(input: &str) -> Vec<String> {
     (0..255_u8)
         .map(|c| {
             let key = hex::encode([c]).repeat(input.len());
-            let r = fixed_xor(input, &key);
-            hex_to_utf8(&r)
+            hex_to_utf8(&fixed_xor(input, &key))
         })
         .collect()
+}
+
+fn get_best_match<T>(plaintexts: T) -> String
+where
+    T: IntoParallelIterator<Item = String>,
+{
+    use english::probability_english_percent;
+
+    plaintexts
+        .into_par_iter()
+        .map(|x| (probability_english_percent(&x), x.to_owned()))
+        .collect::<BTreeMap<u8, String>>()
+        .into_iter()
+        .next_back()
+        .unwrap()
+        .1
 }
 
 pub fn break_repeating_key_xor(cipher_text_base64: &str) -> String {
