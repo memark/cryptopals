@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 fn hex_to_base64(input: &str) -> String {
     base64::encode(hex::decode(input).unwrap())
 }
