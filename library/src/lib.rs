@@ -1,4 +1,3 @@
-mod english;
 pub mod set1;
 pub mod set2;
 
@@ -20,7 +19,7 @@ pub fn fixed_xor(a: &str, b: &str) -> String {
 }
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
-    use crate::english::probability_english;
+    use english::probability_english;
     use std::collections::BTreeMap;
 
     (0..255_u8)
@@ -50,7 +49,7 @@ fn hex_to_utf8(h: &str) -> String {
 }
 
 pub fn detect_single_character_xor(input: Vec<&str>) -> String {
-    use crate::english::probability_english_percent;
+    use english::probability_english_percent;
     use std::{collections::BTreeMap, str};
 
     input

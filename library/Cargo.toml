@@ -1,0 +1,14 @@
+[package]
+name = "library"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base64 = "0.13.0"
+english = { path = "../english" }
+hex = "0.4.3"
+itertools = "0.10.3"
+transpose = "0.2.1"
+
+[dev-dependencies]
+pretty_assertions = "1.3.0"
