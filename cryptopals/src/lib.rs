@@ -33,7 +33,7 @@ pub fn single_byte_xor_cipher(input: &str) -> String {
         .values()
         .next_back()
         .unwrap()
-        .to_string()
+        .to_owned()
 }
 
 fn get_repeated_key(c: u8, l: usize) -> String {
@@ -45,7 +45,7 @@ fn hex_to_utf8(h: &str) -> String {
 
     str::from_utf8(&hex::decode(h).unwrap())
         .unwrap_or_default()
-        .to_string()
+        .to_owned()
 }
 
 pub fn detect_single_character_xor(input: Vec<&str>) -> String {
@@ -59,7 +59,7 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
                 .map(|c| {
                     let key = hex::encode([c]).repeat(i.len());
                     let r = hex::decode(fixed_xor(i, &key)).unwrap();
-                    str::from_utf8(&r).unwrap_or_default().to_string()
+                    str::from_utf8(&r).unwrap_or_default().to_owned()
                 })
                 .map(|x| (probability_english_percent(&x), x.to_owned()))
         })
@@ -67,7 +67,7 @@ pub fn detect_single_character_xor(input: Vec<&str>) -> String {
         .values()
         .next_back()
         .unwrap()
-        .to_string()
+        .to_owned()
 }
 
 pub fn repeating_key_xor(input: &str, key: &str) -> String {
@@ -154,7 +154,7 @@ pub fn break_repeating_key_xor(cipher_text_base64: &str) -> String {
         .collect_vec();
     println!("res {:#?}", res);
 
-    "".to_string()
+    "".to_owned()
 }
 
 fn calculate_padding(total_length: usize, block_size: usize) -> usize {
