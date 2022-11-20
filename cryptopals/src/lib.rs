@@ -1,45 +1,45 @@
 mod utils;
+
+use english::probability_english_percent;
+use std::collections::BTreeMap;
 use utils::*;
 
 pub fn single_byte_xor_cipher(input: &str) -> String {
-    use english::probability_english_percent;
-    use std::collections::BTreeMap;
+    get_possible_plaintexts_for_single_byte_xor_cipher(input)
+        .into_iter()
+        .map(|x| (probability_english_percent(&x), x))
+        .collect::<BTreeMap<u8, String>>()
+        .into_iter()
+        .next_back()
+        .unwrap()
+        .1
+}
 
+pub fn detect_single_character_xor(input: Vec<&str>) -> String {
+    use rayon::prelude::*;
+
+    input
+        .par_iter()
+        .flat_map_iter(|i| {
+            get_possible_plaintexts_for_single_byte_xor_cipher(i)
+                .into_iter()
+                .map(|x| (probability_english_percent(&x), x))
+        })
+        .collect::<BTreeMap<u8, String>>()
+        .into_iter()
+        .next_back()
+        .unwrap()
+        .1
+}
+
+fn get_possible_plaintexts_for_single_byte_xor_cipher(input: &str) -> Vec<String> {
     (0..255_u8)
         .map(|c| {
             let key = hex::encode([c]).repeat(input.len());
             let r = fixed_xor(input, &key);
             hex_to_utf8(&r)
         })
-        .map(|x| (probability_english_percent(&x), x.to_owned()))
-        .collect::<BTreeMap<u8, String>>()
-        .values()
-        .next_back()
-        .unwrap()
-        .to_owned()
-}
-
-pub fn detect_single_character_xor(input: Vec<&str>) -> String {
-    use english::probability_english_percent;
-    use rayon::prelude::*;
-    use std::collections::BTreeMap;
-
-    input
-        .par_iter()
-        .flat_map_iter(|i| {
-            (0..255_u8)
-                .map(|c| {
-                    let key = hex::encode([c]).repeat(i.len());
-                    let r = fixed_xor(i, &key);
-                    hex_to_utf8(&r)
-                })
-                .map(|x| (probability_english_percent(&x), x.to_owned()))
-        })
-        .collect::<BTreeMap<u8, String>>()
-        .values()
-        .next_back()
-        .unwrap()
-        .to_owned()
+        .collect()
 }
 
 pub fn break_repeating_key_xor(cipher_text_base64: &str) -> String {
