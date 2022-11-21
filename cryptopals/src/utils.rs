@@ -1,15 +1,81 @@
 #![allow(dead_code)]
 
+use std::convert::From;
+
+// --
+
+// #[derive(Debug)]
+// struct Base64String {
+//     value: String,
+// }
+
+// impl From<Vec<u8>> for Base64String {
+//     fn from(item: Vec<u8>) -> Self {
+//         Base64String {
+//             value: base64::encode(item),
+//         }
+//     }
+// }
+
+// impl From<Base64String> for Vec<u8> {
+//     fn from(item: Base64String) -> Self {
+//         base64::decode(item.value).unwrap()
+//     }
+// }
+
+// --
+
+#[derive(Debug, Clone)]
+pub struct HexString {
+    value: String,
+}
+
+// impl From<Vec<u8>> for HexString {
+//     fn from(item: Vec<u8>) -> Self {
+//         HexString {
+//             value: hex::encode(item),
+//         }
+//     }
+// }
+
+impl From<&str> for HexString {
+    fn from(item: &str) -> Self {
+        HexString {
+            value: hex::encode(item),
+        }
+    }
+}
+
+// impl From<&HexString> for &[u8] {
+//     fn from(item: &HexString) -> Self {
+//         &hex::decode(&item.value).unwrap()[..]
+//     }
+// }
+
+impl From<&HexString> for Vec<u8> {
+    fn from(item: &HexString) -> Self {
+        hex::decode(&item.value).unwrap()
+    }
+}
+
+// --
+
 fn hex_to_base64(input: &str) -> String {
     base64::encode(hex::decode(input).unwrap())
 }
 
-pub fn fixed_xor(input: &[u8], key: &[u8]) -> Vec<u8> {
+pub fn fixed_xor<T>(input: T, key: &[u8]) -> Vec<u8>
+where
+    T: Into<Vec<u8>> + std::fmt::Debug + Copy,
+{
+    println!("{:?}", &input);
+    println!("{:?}", &input.into());
     input
+        .into()
         .iter()
         .zip(key.iter())
         .map(|(x, y)| x ^ y)
-        .collect::<Vec<u8>>()
+        .collect()
 }
 
 pub fn repeating_key_xor(input: &[u8], key: &[u8]) -> Vec<u8> {
@@ -52,7 +118,7 @@ mod tests {
     fn challenge_2_fixed_xor() {
         assert_eq!(
             fixed_xor(
-                &hex::decode("1c0111001f010100061a024b53535009181c").unwrap(),
+                &HexString::from("1c0111001f010100061a024b53535009181c"),
                 &hex::decode("686974207468652062756c6c277320657965").unwrap()
             ),
             hex::decode("746865206b696420646f6e277420706c6179").unwrap()
