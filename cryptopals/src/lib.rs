@@ -21,10 +21,10 @@ fn get_possible_plaintexts_for_single_byte_xor_cipher(input: &str) -> Vec<String
     let input = hex::decode(input).unwrap();
 
     (0..255_u8)
-        .map(|c| {
+        .filter_map(|c| {
             let key = [c].repeat(input.len());
             let result = fixed_xor(&input, &key);
-            str::from_utf8(&result).unwrap_or_default().to_owned()
+            str::from_utf8(&result).ok().map(|a| a.to_owned())
         })
         .collect()
 }
